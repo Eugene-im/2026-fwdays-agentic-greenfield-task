@@ -12,7 +12,12 @@ export default defineConfig({
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
+    // Full artifact capture so a run can be handed off for analysis:
+    // - video: the demo recording + a visual replay of the whole run
+    // - trace: open with `npx playwright show-trace` (DOM snapshots, network, console)
+    // - screenshot on failure: a PNG an agent can read directly from test-results/
     video: 'on',
-    trace: 'on-first-retry',
+    trace: 'on',
+    screenshot: 'only-on-failure',
   },
 })

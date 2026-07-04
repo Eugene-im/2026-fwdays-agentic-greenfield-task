@@ -5,6 +5,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['dist/**'],
+    // Build output and Playwright-generated artifacts, never hand-written code.
+    ignores: ['dist/**', 'test-results/**', 'playwright-report/**'],
   },
 )
