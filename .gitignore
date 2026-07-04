@@ -25,3 +25,5 @@ venv/
 target/
 bin/
 obj/
+
+examples/
