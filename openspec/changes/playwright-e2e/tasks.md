@@ -7,7 +7,7 @@
 ## 2. Harness config
 
 - [x] 2.1 Add `app/playwright.config.ts`: headed Chromium, `testDir: './e2e'`, `video: 'on'`, output to `test-results/`
-- [x] 2.2 In config or a fixture, launch via `launchPersistentContext` with `--disable-extensions-except`/`--load-extension` pointed at `app/dist/`, a controlled `downloadsPath`, and runtime extension-id resolution from the service worker
+- [x] 2.2 In config or a fixture, launch via `launchPersistentContext` with `--disable-extensions-except`/`--load-extension` pointed at `app/dist/`, a controlled `downloadsPath`, and a deterministic extension id derived from the manifest `key` (popup-only build has no service worker) — `manifest.config.ts` pins the public `key`; the fixture recomputes the id from it
 
 ## 3. Export spec
 

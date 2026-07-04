@@ -19,7 +19,7 @@ Last updated: 2026-07-04 (popup-wiring archived; playwright-e2e proposed + scaff
 - [ ] Homework wrap-up: 1–2 min demo video (from the E2E run), PR with template + practices description
 
 ## Next step
-Two human-gated steps remain, both needing a real Chrome + network to the live ticket: (1) manually verify `popup-wiring` task 6.2 (`cd app && npm run build`, load `app/dist/` unpacked via `chrome://extensions`, Export ROVODEV-36, confirm `Downloads/ROVODEV-36/` folder + `.md` + `media/NN-…` + anonymized names + success-with-caveats on a failed attachment); (2) run the `playwright-e2e` harness (tasks 5.x) to auto-verify the same flow and record the demo, then archive `playwright-e2e`. Note: `e2e/export.spec.ts` resolves the extension id from a background service worker — the current popup-only build has none, so either add a minimal background worker or resolve the id via `chrome://extensions` before the run.
+Two human-gated steps remain, both needing a real Chrome + network to the live ticket: (1) manually verify `popup-wiring` task 6.2 (`cd app && npm run build`, load `app/dist/` unpacked via `chrome://extensions`, Export ROVODEV-36, confirm `Downloads/ROVODEV-36/` folder + `.md` + `media/NN-…` + anonymized names + success-with-caveats on a failed attachment); (2) run the `playwright-e2e` harness (tasks 5.x) to auto-verify the same flow and record the demo, then archive `playwright-e2e`. Extension-id resolution is solved: `manifest.config.ts` pins a public `key` (deterministic id `jkkdkcmamdondchhjdnhdkocfchdlcjg`) and `e2e/export.spec.ts` recomputes it from the built manifest — no background worker needed.
 
 ## Notes
 - Resolve `proposed` items in requirements.md as they get confirmed (FR-04, FR-14, FR-20, NFR-04, product name).

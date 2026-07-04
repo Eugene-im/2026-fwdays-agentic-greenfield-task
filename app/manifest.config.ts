@@ -16,4 +16,10 @@ export default defineManifest({
     128: 'icons/icon-128.png',
   },
   permissions: ['activeTab', 'scripting', 'downloads'],
+  // Public key that pins a deterministic extension id for unpacked loads, so the
+  // Playwright E2E harness can address the popup at a stable
+  // chrome-extension://<id>/ URL without a background service worker. This is a
+  // public key only — no secret — and does not affect runtime behavior or
+  // permissions (NFR-04). Id derived from it: jkkdkcmamdondchhjdnhdkocfchdlcjg.
+  key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq0Fy1flBR36V8qXg4Wb/RXY9lad8AjphaKZqGg1+ST6rj3vTI6ksGQdIIg8TIUS2il1s4G8PffZ9N226pg/DmaOIFMaMDOcgI4qMl58hb4q/wEdwSFqf4u0b+NoTTH3zkxy+BHqYMl+uuABJ9ez5fdR/AictHzoZHI0NNU8FcyBwk7a0h73Mcf0DhuBU/87DrTDrmWHIeR44+BDud9tg4B/nEvlsIA4I1yz/MtY+zj+RhQJnvTDCzyDsB9Sant4LBwpa+k3NdKunxx5qJrBqY8HfYpNgQEgHuQ2dMpMMNUB7Q97m0scn5Cuh24P2TFE09CgO2aE6FjG6T7YPqjnNRQIDAQAB',
 })

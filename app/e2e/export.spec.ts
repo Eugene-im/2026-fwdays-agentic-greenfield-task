@@ -1,5 +1,6 @@
 import { test as base, expect, chromium, type BrowserContext } from '@playwright/test'
 import { fileURLToPath } from 'node:url'
+import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -35,22 +36,19 @@ const test = base.extend<Fixtures>({
     await context.close()
   },
 
-  extensionId: async ({ context }, use) => {
-    // NOTE: resolving the id from a background service worker only works if the
-    // MV3 build declares one. The current Ticket2MD build has no background
-    // worker (popup-only), so this waits briefly and otherwise surfaces a clear
-    // message — a documented prerequisite for the automated run (tasks 5.x).
-    let [worker] = context.serviceWorkers()
-    if (!worker) {
-      worker = await context.waitForEvent('serviceworker', { timeout: 5_000 }).catch(() => undefined as never)
+  // eslint-disable-next-line no-empty-pattern
+  extensionId: async ({}, use) => {
+    // The popup-only MV3 build has no background service worker, so the id is
+    // derived deterministically from the public `key` in the built manifest
+    // (see manifest.config.ts) — the same algorithm Chrome uses: first 16 bytes
+    // of SHA-256(DER public key), each hex digit mapped 0-f → a-p.
+    const manifest = JSON.parse(fs.readFileSync(path.join(DIST_PATH, 'manifest.json'), 'utf8')) as { key?: string }
+    if (!manifest.key) {
+      throw new Error('Built manifest has no `key`; cannot derive a deterministic extension id.')
     }
-    if (!worker) {
-      throw new Error(
-        'Could not resolve the extension id from a service worker. Add a background ' +
-          'service worker to the build, or resolve the id via chrome://extensions before running.',
-      )
-    }
-    await use(new URL(worker.url()).host)
+    const digest = crypto.createHash('sha256').update(Buffer.from(manifest.key, 'base64')).digest('hex').slice(0, 32)
+    const id = [...digest].map((hex) => String.fromCharCode(97 + parseInt(hex, 16))).join('')
+    await use(id)
   },
 })
 
