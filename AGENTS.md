@@ -58,4 +58,11 @@ A failed media download is reported in the popup error details but never aborts 
 
 ## Commands
 
-Not scaffolded yet. Once `app/` exists, record the exact build / test / lint / type-check commands here.
+Run from `app/` (Node 20.19+ required — see `app/.nvmrc`; `nvm use` before running):
+
+- `npm install` — install dependencies
+- `npm run dev` — Vite dev server with HMR (includes the dev-only popup state switcher, stripped from production builds)
+- `npm run build` — type-check (`tsc`) + production build to `app/dist/`; load `app/dist/` unpacked via `chrome://extensions`
+- `npm run typecheck` — `tsc --noEmit`
+- `npm run lint` — ESLint (flat config, `typescript-eslint` recommended rules)
+- `npm run test` — Vitest (`lib/` suite; empty until `jira-parser`/`markdown-serializer`/`anonymizer` land)
