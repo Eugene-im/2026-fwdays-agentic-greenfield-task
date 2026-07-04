@@ -48,7 +48,7 @@ When the tab is not a recognized ticket page (FR-04): same layout, button disabl
 Title stays; controls replaced by a centered Pico loader (`aria-busy="true"`) with the label "Exporting…".
 
 ### State 3 — success
-Title stays; green-accented message "Export completed successfully." No auto-close.
+Title stays; green-accented message "Export completed successfully." No auto-close. When the `.md` exported but one or more attachments could not be downloaded (FR-12 partial success), an optional caveats `<details>` block appears below the message listing the attachments that failed. This is a variant of the success state, not a new state (FR-09) — hard failures (no `.md` produced) still use State 4.
 
 ### State 4 — error
 Title stays; red-accented message "Export failed" plus a details block (Pico `<details>`) listing specifics, e.g. attachments that could not be downloaded (FR-12).

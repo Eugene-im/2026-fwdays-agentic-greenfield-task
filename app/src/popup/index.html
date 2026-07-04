@@ -10,6 +10,7 @@
       <h1>Export ticket to MD</h1>
 
       <section data-panel="idle">
+        <p id="ticket-hint" class="hint" hidden>Open a Jira ticket</p>
         <label>
           <input type="checkbox" id="anonymize" checked />
           Anonymize names
@@ -23,15 +24,17 @@
 
       <section data-panel="success" aria-live="polite">
         <p class="state-success">Export completed successfully.</p>
+        <details id="success-caveats" hidden>
+          <summary>Some attachments couldn’t be downloaded</summary>
+          <ul id="success-caveats-list"></ul>
+        </details>
       </section>
 
       <section data-panel="error" aria-live="polite">
-        <p class="state-error">Export failed</p>
-        <details>
+        <p id="error-message" class="state-error">Export failed</p>
+        <details open>
           <summary>Details</summary>
-          <ul id="error-details">
-            <li>02-screenshot.png — download failed (link expired)</li>
-          </ul>
+          <ul id="error-details"></ul>
         </details>
       </section>
     </main>
