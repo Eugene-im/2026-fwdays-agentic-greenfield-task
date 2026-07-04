@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-04 (jira-parser change implemented and committed; not yet archived)
+Last updated: 2026-07-04 (markdown-serializer change implemented, archived, and committed)
 
 ## Plan
 - [x] Product docs — `docs/product-brief.md`, `docs/requirements.md` (FR-01…FR-21, NFR-01…NFR-07), `docs/DESIGN.md`
@@ -11,16 +11,16 @@ Last updated: 2026-07-04 (jira-parser change implemented and committed; not yet 
 - [x] Toolbar icon "md" (SVG → 16/32/48/128, graphite + azure arrow per DESIGN.md)
 - [x] Popup UI shell: 4 states per DESIGN.md (FR-05…FR-09) — **static only**, no real logic yet; dev-only state switcher in `npm run dev`, stripped from prod build
 - [x] Fill Commands section in `AGENTS.md` (build/lint/typecheck/test, all <60s combined)
-- [x] Jira DOM parser — `app/src/lib/jira-parser/` (OpenSpec change `jira-parser`, 17/17 tasks done): parses key/title/type/status/resolution/priority/components/labels/description/people/dates/comments/attachments; 21 Vitest tests (real ROVODEV-36 fixture + hand-authored fixtures for fields the real page lacks) — implements FR-01, FR-02, parsing portion of FR-10
-- [ ] Markdown serializer (OpenSpec change `markdown-serializer`) — converts `ParsedTicket` → `.md`, next in line
-- [ ] Anonymizer (OpenSpec change `anonymizer`)
+- [x] Jira DOM parser — `app/src/lib/jira-parser/` (OpenSpec change `jira-parser`, archived, 17/17 tasks done): parses key/title/type/status/resolution/priority/components/labels/description/people/dates/comments/attachments; 21 Vitest tests (real ROVODEV-36 fixture + hand-authored fixtures for fields the real page lacks) — implements FR-01, FR-02, parsing portion of FR-10
+- [x] Markdown serializer — `app/src/lib/markdown-serializer/` (OpenSpec change `markdown-serializer`, archived, 15/15 tasks done): `serializeTicketToMarkdown` + `planAttachmentNames`, uses `turndown` for inline HTML→Markdown; 39 Vitest tests — implements FR-10, FR-13, FR-14
+- [ ] Anonymizer (OpenSpec change `anonymizer`) — next in line
 - [ ] Popup wiring: connect real extraction/anonymization/downloads to the popup shell (OpenSpec change `popup-wiring`)
 - [ ] Downloads flow: folder structure + media `01-` prefixes (FR-13…FR-17)
 - [ ] Playwright E2E harness (OpenSpec change `playwright-e2e`) against live ROVODEV-36; can double as the demo-video source (`video: 'on'`)
 - [ ] Homework wrap-up: 1–2 min demo video, PR with template + practices description
 
 ## Next step
-Run `/opsx:propose markdown-serializer` — convert `ParsedTicket` (from `jira-parser`) into the `.md` file content per FR-10, FR-13, FR-14.
+Run `/opsx:propose anonymizer` — replace names in ticket text/comments/media file names with `User1`, `User2`, … consistently per export (FR-19–FR-21).
 
 ## Notes
 - Resolve `proposed` items in requirements.md as they get confirmed (FR-04, FR-14, FR-20, NFR-04, product name).
