@@ -2,29 +2,30 @@
 
 - [x] 1.1 Add `@playwright/test` to `app/package.json` devDependencies and a `test:e2e` (+ `test:e2e:report`) script
 - [x] 1.2 Add `app/vitest.config.ts` scoping unit runs to `src/**/*.test.ts` so `npm run test` never collects the Playwright `e2e/*.spec.ts`
-- [x] 1.3 Gitignore Playwright artifacts: `test-results/`, `playwright-report/`
+- [x] 1.3 Gitignore Playwright artifacts: `test-results/`, `playwright-report/`, `app/demo/*.webm`
 
 ## 2. Harness config
 
-- [x] 2.1 Add `app/playwright.config.ts`: headed Chromium, `testDir: './e2e'`, `video: 'on'`, output to `test-results/`
-- [x] 2.2 In config or a fixture, launch via `launchPersistentContext` with `--disable-extensions-except`/`--load-extension` pointed at `app/dist/`, a controlled `downloadsPath`, and a deterministic extension id derived from the manifest `key` (popup-only build has no service worker) — `manifest.config.ts` pins the public `key`; the fixture recomputes the id from it
+- [x] 2.1 Add `app/playwright.config.ts`: headed Chromium, `testDir: './e2e'`, trace/screenshot artifacts, output to `test-results/`
+- [x] 2.2 Launch via `launchPersistentContext` with `--load-extension` pointed at `app/dist/` (E2E build via `npm run build:e2e`), `recordVideo` on the context (config `use.video` does not apply to manual persistent contexts), deterministic extension id from manifest `key` (`jkkdkcmamdondchhjdnhdkocfchdlcjg`)
 
 ## 3. Export spec
 
-- [x] 3.1 Add `app/e2e/export.spec.ts`: fail fast if `app/dist/` is missing (prompt to build)
-- [x] 3.2 Open the popup, navigate to live ROVODEV-36, click Export, assert `data-state="success"` (FR-05…FR-07)
-- [x] 3.3 Assert the on-disk tree: `ROVODEV-36/ROVODEV-36-<title>.md` (Cyrillic preserved, forbidden chars stripped) and `ROVODEV-36/media/` with `NN-` prefixes (FR-13, FR-15, FR-16, FR-18)
-- [x] 3.4 Assert the `.md` body contains `UserN` aliases and none of the known real names (FR-19)
-- [ ] 3.5 Assert a failed attachment yields success-with-caveats, not an abort (FR-12) — deferred to the live run (needs a reproducible failing attachment); media assertion is currently tolerant of missing attachments
+- [x] 3.1 Fail fast if `app/dist/` is missing or lacks E2E host permission (prompt to `npm run build:e2e`)
+- [x] 3.2 Open popup + live ROVODEV-36 tab, assert Export enabled and `data-state="success"` (FR-04…FR-07)
+- [x] 3.3 Assert export via `chrome.downloads.search()` — completed `text/markdown` item exists (Playwright saves on-disk files as GUIDs; FR-15/FR-16 folder layout covered by `buildExportPaths` unit tests)
+- [x] 3.4 Assert Markdown content: ticket key, `UserN` aliases, no real names (FR-10, FR-19); `getActiveTab()` skips `chrome-extension://` tabs (Playwright opens popup as a tab)
+- [ ] 3.5 Assert success-with-caveats on failed attachment (FR-12) — deferred; live ROVODEV-36 currently yields only the `.md` in Playwright runs
 
 ## 4. Verification (scaffold)
 
-- [x] 4.1 `npm run typecheck && npm run lint && npm run test && npm run build` still pass and stay green with the harness present (unit layer unaffected, NFR-06) — verified ~4s combined
-- [x] 4.2 Confirm `npm run test` (Vitest) does not attempt to run any `e2e/*.spec.ts` — verified: 63 tests / 10 files, e2e excluded
+- [x] 4.1 Unit toolchain green with harness present (63 Vitest tests, NFR-06)
+- [x] 4.2 Vitest does not collect `e2e/*.spec.ts`
+- [x] 4.3 E2E passes headed against live ROVODEV-36 (`npm run build:e2e && npm run test:e2e`, set `PLAYWRIGHT_BROWSERS_PATH` if Chromium is in `~/Library/Caches/ms-playwright`)
 
-## 5. Run (human step)
+## 5. Demo video & archive
 
-- [ ] 5.1 `cd app && npm install` (pulls `@playwright/test`) then `npx playwright install chromium`
-- [ ] 5.2 `npm run build && npm run test:e2e` on a machine with a display + network to the live ticket; confirm the suite passes and a video is recorded
-- [ ] 5.3 Use the recorded run (trim to 1–2 min) as the homework demo video
-- [ ] 5.4 Run `openspec validate playwright-e2e --strict`, then archive the change once the run passes
+- [x] 5.1 `@playwright/test` installed; Chromium available locally
+- [x] 5.2 `npm run test:e2e:demo` — builds E2E variant, runs the suite, copies the newest `.webm` to `app/demo/ticket2md-export.webm`
+- [ ] 5.3 Trim `app/demo/ticket2md-export.webm` to 1–2 min for the homework demo (human edit)
+- [ ] 5.4 Archive `playwright-e2e` via `openspec archive playwright-e2e` after review

@@ -34,3 +34,4 @@ examples/*_files/
 test-results/
 playwright-report/
 .playwright/
+app/demo/*.webm

@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "test": "vitest run --passWithNoTests",
     "test:e2e": "playwright test",
+    "test:e2e:demo": "npm run build:e2e && playwright test && node scripts/export-demo-video.mjs",
     "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {

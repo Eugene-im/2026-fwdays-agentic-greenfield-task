@@ -1,9 +1,10 @@
 import { defineConfig } from '@playwright/test'
 
 // Headed only: Chrome extensions load unreliably headless (see
-// docs/requirements.md §3). `video: 'on'` so a passing run doubles as the
-// homework demo source. Extension loading itself happens per-test via
-// launchPersistentContext in e2e/export.spec.ts.
+// docs/requirements.md §3). Screen recording is enabled on the manually
+// launched persistent context in e2e/export.spec.ts (`recordVideo`) — the
+// config-level `use.video` flag does not apply there. `test:e2e:demo` copies
+// the recording to app/demo/ticket2md-export.webm for the homework demo.
 export default defineConfig({
   testDir: './e2e',
   outputDir: 'test-results',
@@ -16,7 +17,7 @@ export default defineConfig({
     // - video: the demo recording + a visual replay of the whole run
     // - trace: open with `npx playwright show-trace` (DOM snapshots, network, console)
     // - screenshot on failure: a PNG an agent can read directly from test-results/
-    video: 'on',
+    video: 'off',
     trace: 'on',
     screenshot: 'only-on-failure',
   },

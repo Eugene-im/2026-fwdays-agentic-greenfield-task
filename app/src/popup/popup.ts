@@ -33,8 +33,11 @@ function describeError(error: unknown): string {
 }
 
 async function getActiveTab(): Promise<chrome.tabs.Tab | undefined> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
-  return tab
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
+  // Toolbar popups are not tabs, but Playwright opens the popup as a tab page —
+  // skip extension pages so Export targets the Jira content tab behind the popup.
+  const contentTab = tabs.find((tab) => tab.url !== undefined && !tab.url.startsWith('chrome-extension://'))
+  return contentTab ?? tabs[0]
 }
 
 /** Injects the extraction script into the tab and awaits its posted ParseResult. */
