@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-04 (playwright-e2e harness passing; demo video script added)
+Last updated: 2026-07-04 (playwright-e2e archived; E2E passing + demo video script)
 
 ## Plan
 - [x] Product docs — `docs/product-brief.md`, `docs/requirements.md` (FR-01…FR-21, NFR-01…NFR-07), `docs/DESIGN.md`
@@ -15,11 +15,11 @@ Last updated: 2026-07-04 (playwright-e2e harness passing; demo video script adde
 - [x] Markdown serializer — `app/src/lib/markdown-serializer/` (archived, 39 Vitest tests)
 - [x] Anonymizer — `app/src/lib/anonymizer/` (archived, 51 Vitest tests)
 - [x] Popup wiring + downloads flow — `popup-wiring` (archived, 20/21 tasks): full export flow via `chrome.scripting` + `chrome.downloads`; FR-04…FR-18, FR-12 partial-success. Task 6.2 (manual unpacked verification) remains optional — E2E now covers the live ticket path.
-- [~] Playwright E2E harness — `playwright-e2e` (**active, not archived**): headed suite passes against live ROVODEV-36 (~4s). E2E build (`npm run build:e2e`) adds Jira host permission for automation; assertions are content-based (Playwright saves downloads as GUIDs on disk). `getActiveTab()` skips extension tabs. **`npm run test:e2e:demo`** records screen via `recordVideo` and copies `app/demo/ticket2md-export.webm`. Remaining: trim video to 1–2 min (human), archive change, PR.
-- [ ] Homework wrap-up: trim demo video, PR with template + practices description
+- [x] Playwright E2E harness — `playwright-e2e` (archived, 14/17 tasks done): headed suite passes against live ROVODEV-36 (~4s). E2E build (`npm run build:e2e`) adds Jira host permission; content-based assertions (GUID on-disk names under Playwright). `npm run test:e2e:demo` records via `recordVideo` → `app/demo/ticket2md-export.webm`. New capability spec `e2e-verification`. Remaining: trim demo video (5.3), PR (homework wrap-up).
+- [ ] Homework wrap-up: trim `app/demo/ticket2md-export.webm` to 1–2 min, PR with template + practices description
 
 ## Next step
-Run `cd app && export PLAYWRIGHT_BROWSERS_PATH="$HOME/Library/Caches/ms-playwright" && npm run test:e2e:demo` to refresh the demo recording, trim `app/demo/ticket2md-export.webm` to 1–2 min, then archive `playwright-e2e` and open the homework PR.
+Trim `app/demo/ticket2md-export.webm` to 1–2 min (QuickTime/iMovie/etc.), then open the homework PR using the repo template.
 
 ## Notes
 - E2E prerequisites: Node 20.19+ (`app/.nvmrc`), `npm install`, Chromium for Playwright (`npx playwright install chromium` or use existing cache via `PLAYWRIGHT_BROWSERS_PATH`).
