@@ -1,6 +1,6 @@
 # Project State
 
-Last updated: 2026-07-04 (anonymizer change implemented, archived, and committed)
+Last updated: 2026-07-04 (popup-wiring change implemented, archived, and committed)
 
 ## Plan
 - [x] Product docs — `docs/product-brief.md`, `docs/requirements.md` (FR-01…FR-21, NFR-01…NFR-07), `docs/DESIGN.md`
@@ -14,13 +14,12 @@ Last updated: 2026-07-04 (anonymizer change implemented, archived, and committed
 - [x] Jira DOM parser — `app/src/lib/jira-parser/` (OpenSpec change `jira-parser`, archived, 17/17 tasks done): parses key/title/type/status/resolution/priority/components/labels/description/people/dates/comments/attachments; 21 Vitest tests (real ROVODEV-36 fixture + hand-authored fixtures for fields the real page lacks) — implements FR-01, FR-02, parsing portion of FR-10
 - [x] Markdown serializer — `app/src/lib/markdown-serializer/` (OpenSpec change `markdown-serializer`, archived, 15/15 tasks done): `serializeTicketToMarkdown` + `planAttachmentNames`, uses `turndown` for inline HTML→Markdown; 39 Vitest tests — implements FR-10, FR-13, FR-14
 - [x] Anonymizer — `app/src/lib/anonymizer/` (OpenSpec change `anonymizer`, archived, 14/14 tasks done): `anonymizeTicket` builds alias map from structured name fields (assignee/reporter/comment authors), replaces consistently across text + attachment names; 51 Vitest tests — implements FR-19, FR-21 (FR-20 remains `proposed`)
-- [ ] Popup wiring: connect real extraction/anonymization/downloads to the popup shell (OpenSpec change `popup-wiring`) — next in line
-- [ ] Downloads flow: folder structure + media `01-` prefixes (FR-13…FR-17)
+- [x] Popup wiring + downloads flow — `app/src/popup/`, `app/src/content-scripts/`, `app/src/lib/export-naming/`, `app/src/lib/ticket-url/` (OpenSpec change `popup-wiring`, archived, 20/21 tasks done): Export click → `chrome.scripting` injects `extract-ticket` to run `parseJiraTicket` in the active tab (FR-02) → optional `anonymizeTicket` per checkbox (FR-09, FR-19) → `serializeTicketToMarkdown` + `planAttachmentNames` → `chrome.downloads` writes `Downloads/<KEY>/<KEY>-<title>.md` + `media/NN-…` separately (FR-10…FR-18); per-attachment failures tracked independently → success-with-caveats, never aborting (FR-12); FR-04 ticket detection on open; dev-only switcher removed. New capability spec `export-flow`; `popup-shell` spec modified. 12 new Vitest tests (`buildExportPaths`, `looksLikeJiraTicketUrl`); build/typecheck/lint/test all green (~3.8s). **Remaining task 6.2 = manual in-browser verification against live ROVODEV-36 (human step, not runnable here).**
 - [ ] Playwright E2E harness (OpenSpec change `playwright-e2e`) against live ROVODEV-36; can double as the demo-video source (`video: 'on'`)
 - [ ] Homework wrap-up: 1–2 min demo video, PR with template + practices description
 
 ## Next step
-Run `/opsx:propose popup-wiring` — connect `jira-parser` + `markdown-serializer` + `anonymizer` to the real popup: `chrome.scripting` to run the parser in the active tab, checkbox-driven anonymization, `chrome.downloads` for the `.md` + `media/` folder, and the FR-12 partial-success error contract.
+Manually verify `popup-wiring` (task 6.2): `cd app && npm run build`, load `app/dist/` unpacked via `chrome://extensions`, open the live ROVODEV-36 ticket, click Export, and confirm the `Downloads/ROVODEV-36/` folder, `.md`, `media/NN-…` prefixes, anonymized names, and success-with-caveats on a failed attachment. Then run `/opsx:propose playwright-e2e` to automate that flow (headed Chrome via `launchPersistentContext` + `--load-extension`), which can also record the demo video.
 
 ## Notes
 - Resolve `proposed` items in requirements.md as they get confirmed (FR-04, FR-14, FR-20, NFR-04, product name).
