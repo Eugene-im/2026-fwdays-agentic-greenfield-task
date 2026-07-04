@@ -9,12 +9,15 @@
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.7.1",
     "@eslint/js": "^10.0.1",
     "@picocss/pico": "^2.1.1",
+    "@playwright/test": "^1.61.1",
     "@types/chrome": "^0.2.2",
     "@types/jsdom": "^28.0.3",
     "@types/turndown": "^5.0.6",
