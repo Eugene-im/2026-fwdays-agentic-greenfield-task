@@ -36,7 +36,7 @@ The parser SHALL attempt `#status-val` first, and SHALL fall back to the transit
 - **THEN** the parser returns `status: "Gathering Interest"`
 
 ### Requirement: Parse Description as Structured Content
-The parser SHALL extract the description block's content in a form that preserves paragraphs, lists, links, and code blocks for later Markdown conversion (not just flattened plain text).
+The parser SHALL extract the description block's content in a form that preserves paragraphs, lists, links, and code blocks for later Markdown conversion (not just flattened plain text), and SHALL set `ParsedTicket.description` to an empty array (`[]`, never `undefined`/`null`) when no description block is present.
 
 #### Scenario: Description with mixed content
 - **WHEN** `#description-val` contains paragraphs, a bullet list, and a hyperlink
@@ -44,7 +44,7 @@ The parser SHALL extract the description block's content in a form that preserve
 
 #### Scenario: Description absent
 - **WHEN** the DOM has no `#description-val` element or it is empty
-- **THEN** the parser returns `description: []` (never `undefined`)
+- **THEN** the parser returns `ParsedTicket.description` as `[]` (never `undefined`/`null`)
 
 ### Requirement: Parse People and Dates
 The parser SHALL extract assignee and reporter from the people module, and created/updated timestamps from the dates module, when present.

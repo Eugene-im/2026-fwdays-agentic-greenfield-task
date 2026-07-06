@@ -9,13 +9,13 @@ The E2E harness SHALL launch a real (headed) Chromium with the built extension f
 
 #### Scenario: Build is required first
 - **WHEN** `app/dist/` does not exist
-- **THEN** the harness fails fast with a message indicating `npm run build` must run first
+- **THEN** the harness fails fast with a message indicating `npm run build:e2e` must run first
 
-### Requirement: Drive the Popup Export Against the Live Reference Ticket
-The E2E harness SHALL navigate to the live ROVODEV-36 ticket, trigger Export from the popup, and assert the popup reaches the success state (FR-05…FR-07).
+### Requirement: Drive the Popup Export Against a Deterministic Fixture
+The E2E harness SHALL serve the saved ROVODEV-36 HTML fixture locally, navigate to it, trigger Export from the popup, and assert the popup reaches the success state (FR-05…FR-07).
 
 #### Scenario: Export reaches success
-- **WHEN** the popup's Export button is clicked on the live ROVODEV-36 ticket tab
+- **WHEN** the popup's Export button is clicked on the locally served ROVODEV-36 fixture tab
 - **THEN** the popup transitions through the in-progress state and ends in the success state (`data-state="success"`)
 
 ### Requirement: Assert the On-Disk Export Layout
