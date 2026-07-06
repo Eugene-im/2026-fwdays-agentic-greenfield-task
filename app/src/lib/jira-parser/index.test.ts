@@ -158,6 +158,23 @@ describe('parseJiraTicket — hand-authored fixtures (FR-10, FR-11, FR-12)', () 
     expect(result.ticket.attachments[0]?.url).toMatch(/\/secure\/attachment\/12345\/screenshot\.png$/)
   })
 
+  it('records attachmentSkips when attachment title is missing (FR-12)', () => {
+    const doc = parseFragment(`
+      <a id="key-val">PROJ-7</a>
+      <div id="summary-val"><h2>Untitled attachment</h2></div>
+      <div id="attachmentmodule">
+        <a class="attachment-title" href="/secure/attachment/99/file.png"></a>
+      </div>
+    `)
+    const result = parseJiraTicket(doc)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.ticket.attachments).toEqual([])
+    expect(result.ticket.attachmentSkips).toEqual([
+      { name: '', reason: 'Attachment title is missing.' },
+    ])
+  })
+
   it('records attachmentSkips when href cannot be resolved (FR-12)', () => {
     const doc = parseFragment(`
       <a id="key-val">PROJ-6</a>

@@ -49,4 +49,19 @@ describe('collectNames', () => {
   it('collects a person-shaped title when no assignee or reporter is set', () => {
     expect(collectNames(ticketWith({ title: 'Federico Ciner' }))).toEqual(['Federico Ciner'])
   })
+
+  it('ignores a person-shaped title when assignee or reporter is set', () => {
+    expect(
+      collectNames(ticketWith({ title: 'Federico Ciner', assignee: 'Alice' })),
+    ).toEqual(['Alice'])
+    expect(
+      collectNames(ticketWith({ title: 'Federico Ciner', reporter: 'Bob' })),
+    ).toEqual(['Bob'])
+  })
+
+  it('ignores ticket titles that are not title-case display names', () => {
+    expect(collectNames(ticketWith({ title: 'fix login bug' }))).toEqual([])
+    expect(collectNames(ticketWith({ title: 'Gitlab SaaS integration' }))).toEqual([])
+    expect(collectNames(ticketWith({ title: 'Add user feedback' }))).toEqual([])
+  })
 })

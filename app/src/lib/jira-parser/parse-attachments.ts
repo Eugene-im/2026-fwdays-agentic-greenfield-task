@@ -30,7 +30,10 @@ export function parseAttachments(root: ParentNode): ParseAttachmentsResult {
     const name = a.textContent?.trim()
     const href = a.getAttribute('href')
 
-    if (!name) continue
+    if (!name) {
+      skipped.push({ name: '', reason: 'Attachment title is missing.' })
+      continue
+    }
 
     if (!href) {
       skipped.push({ name, reason: 'Attachment link is missing href.' })
