@@ -7,7 +7,7 @@ The extension has no way to turn a Jira ticket page into structured data yet —
 - Add a framework-free Jira DOM parser in `app/src/lib/jira-parser/` that takes a `Document` (or `Element` root) and returns a structured `ParsedTicket` object: key, title, type, status, resolution, components, description (HTML→structured blocks), people (assignee/reporter), dates (created/updated), comments, and attachments.
 - Parser reads directly from the DOM — no `fetch`, no tracker REST calls, no Chrome APIs (FR-02, NFR-07).
 - Missing/absent fields (e.g. no priority, no labels, no attachments, no comments) are represented as empty/undefined rather than throwing — the real `examples/` fixture (ROVODEV-36) itself has no priority-val, labels-val, or attachment elements, so this is the common case, not an edge case.
-- Unit tests (Vitest) against the static `examples/[ROVODEV-36]...html` fixture using `jsdom` (or Vitest's built-in `happy-dom`/`jsdom` environment) to parse real markup, not hand-rolled test HTML.
+- Unit tests (Vitest) against the static `examples/[ROVODEV-36]...html` fixture using `jsdom` (or Vitest's built-in `happy-dom`/`jsdom` environment) to parse real markup, supplemented by minimal hand-authored HTML fragments for fields absent from the real fixture (comments, attachments, priority, labels).
 
 Out of scope for this change: Markdown serialization (separate `markdown-serializer` change), anonymization, attachment downloading, Azure DevOps (out of MVP scope per `docs/product-brief.md`).
 

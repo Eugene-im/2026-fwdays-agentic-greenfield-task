@@ -3,10 +3,9 @@ import { fileURLToPath } from 'node:url'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import path from 'node:path'
+import { FIXTURE_TICKET_KEY, startFixtureServer } from './fixture-server'
 
 const DIST_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../dist')
-const TICKET_URL = 'https://jira.atlassian.com/browse/ROVODEV-36'
-const TICKET_KEY = 'ROVODEV-36'
 
 interface DistManifest {
   key?: string
@@ -24,6 +23,12 @@ function readDistManifest(): DistManifest {
     throw new Error(`Extension build not found at ${DIST_PATH}. Run "npm run build:e2e" first.`)
   }
   return JSON.parse(fs.readFileSync(path.join(DIST_PATH, 'manifest.json'), 'utf8')) as DistManifest
+}
+
+function hasE2eHostPermission(permissions: string[] | undefined): boolean {
+  return (
+    permissions?.some((p) => p.includes('127.0.0.1') || p.includes('localhost')) ?? false
+  )
 }
 
 /** Query chrome.downloads from the extension popup. */
@@ -50,13 +55,21 @@ function isCompletedMarkdown(download: DownloadRecord): boolean {
 interface Fixtures {
   context: BrowserContext
   extensionId: string
+  ticketUrl: string
 }
 
 const test = base.extend<Fixtures>({
   // eslint-disable-next-line no-empty-pattern -- Playwright fixture with no deps
+  ticketUrl: async ({}, use) => {
+    const server = await startFixtureServer()
+    await use(server.ticketUrl)
+    await server.close()
+  },
+
+  // eslint-disable-next-line no-empty-pattern -- Playwright fixture with no deps
   context: async ({}, use, testInfo) => {
     const manifest = readDistManifest()
-    if (!manifest.host_permissions?.some((p) => p.includes('jira.atlassian.com'))) {
+    if (!hasE2eHostPermission(manifest.host_permissions)) {
       throw new Error('dist/ is a production build without the E2E host permission. Run "npm run build:e2e" first.')
     }
     // `use.video` in playwright.config.ts does not apply to a manually launched
@@ -82,7 +95,7 @@ const test = base.extend<Fixtures>({
 })
 
 test.describe('Ticket2MD end-to-end export', () => {
-  test('popup opens, sees the ticket tab, and exports it to disk', async ({ context, extensionId }) => {
+  test('popup opens, sees the ticket tab, and exports it to disk', async ({ context, extensionId, ticketUrl }) => {
     const popupUrl = `chrome-extension://${extensionId}/src/popup/index.html`
     let popup!: Awaited<ReturnType<BrowserContext['newPage']>>
     let ticketPage!: Awaited<ReturnType<BrowserContext['newPage']>>
@@ -97,7 +110,7 @@ test.describe('Ticket2MD end-to-end export', () => {
 
     await test.step('2. With a ticket tab open, the popup detects it and enables Export (FR-04, FR-05)', async () => {
       ticketPage = await context.newPage()
-      await ticketPage.goto(TICKET_URL, { waitUntil: 'domcontentloaded' })
+      await ticketPage.goto(ticketUrl, { waitUntil: 'domcontentloaded' })
       await ticketPage.bringToFront()
       await popup.reload()
       await expect(popup.locator('#export-btn')).toBeEnabled({ timeout: 10_000 })
@@ -127,9 +140,15 @@ test.describe('Ticket2MD end-to-end export', () => {
       expect(fs.existsSync(mdDownload!.filename), 'Markdown file should exist on disk').toBe(true)
 
       const markdown = fs.readFileSync(mdDownload!.filename, 'utf8')
-      expect(markdown).toContain(`# ${TICKET_KEY}`)
+      expect(markdown).toContain(`# ${FIXTURE_TICKET_KEY}`)
       expect(markdown).toMatch(/User\d+/)
       expect(markdown).not.toMatch(/Federico Ciner|Seerat/)
+
+      // FR-19: anonymized export must not leak real names via on-disk artifact paths.
+      const downloads = await getExtensionDownloads(popup)
+      for (const download of downloads.filter((item) => item.state === 'complete')) {
+        expect(download.filename).not.toMatch(/Federico Ciner|Seerat/)
+      }
     })
   })
 })

@@ -54,7 +54,8 @@ Archive a completed change in the experimental workflow.
    Use `artifactPaths.specs.existingOutputPaths` from status JSON to check for delta specs. If none exist, proceed without sync prompt.
 
    **If delta specs exist:**
-   - Compare each delta spec with its corresponding main spec at `openspec/specs/<capability>/spec.md`
+   - For each delta spec path in `artifactPaths.specs.existingOutputPaths`, resolve the corresponding main spec path from the status JSON (`artifactPaths`, `planningHome`, or other resolved paths returned by the CLI) — do **not** hardcode `openspec/specs/<capability>/spec.md`, which breaks store mode
+   - Compare each delta spec with its resolved main spec counterpart
    - Determine what changes would be applied (adds, modifications, removals, renames)
    - Show a combined summary before prompting
 

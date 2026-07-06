@@ -40,4 +40,9 @@ describe('renderDescription', () => {
     const blocks: DescriptionBlock[] = [{ kind: 'code', code: 'plain text' }]
     expect(renderDescription(blocks)).toEqual(['```\nplain text\n```'])
   })
+
+  it('uses a longer fence when the code contains triple backticks', () => {
+    const blocks: DescriptionBlock[] = [{ kind: 'code', code: '```not a fence```', language: 'txt' }]
+    expect(renderDescription(blocks)).toEqual(['````txt\n```not a fence```\n````'])
+  })
 })

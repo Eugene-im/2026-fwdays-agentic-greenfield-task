@@ -11,6 +11,15 @@ function convertInline(html: string): string {
   return turndownService.turndown(html).trim()
 }
 
+function fenceCode(code: string, language?: string): string {
+  let fence = '```'
+  while (code.includes(fence)) {
+    fence += '`'
+  }
+  const lang = language ?? ''
+  return `${fence}${lang}\n${code}\n${fence}`
+}
+
 export function renderDescription(blocks: DescriptionBlock[]): string[] {
   return blocks.map((block) => {
     switch (block.kind) {
@@ -23,7 +32,7 @@ export function renderDescription(blocks: DescriptionBlock[]): string[] {
           .map((item, index) => `${block.ordered ? `${index + 1}.` : '-'} ${convertInline(item)}`)
           .join('\n')
       case 'code':
-        return '```' + (block.language ?? '') + '\n' + block.code + '\n' + '```'
+        return fenceCode(block.code, block.language)
     }
   })
 }

@@ -42,6 +42,10 @@ The parser SHALL extract the description block's content in a form that preserve
 - **WHEN** `#description-val` contains paragraphs, a bullet list, and a hyperlink
 - **THEN** the parser's returned description structure preserves each element distinctly enough that a serializer can reconstruct paragraphs, list items, and links separately
 
+#### Scenario: Description absent
+- **WHEN** the DOM has no `#description-val` element or it is empty
+- **THEN** the parser returns `description: []` (never `undefined`)
+
 ### Requirement: Parse People and Dates
 The parser SHALL extract assignee and reporter from the people module, and created/updated timestamps from the dates module, when present.
 

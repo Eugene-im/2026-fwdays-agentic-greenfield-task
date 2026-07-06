@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 input="$(cat)"
 cmd="$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null)"
@@ -16,11 +17,14 @@ name="${name:-unknown}"
 repo_dir="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 cd "$repo_dir" || exit 0
 
-git add openspec/ >/dev/null 2>&1
+# Stage only paths that archive/sync would touch — not the entire openspec/ tree.
+git add openspec/changes/ openspec/specs/ 2>/dev/null || true
 
-if git diff --cached --quiet -- openspec/ 2>/dev/null; then
+if git diff --cached --quiet -- openspec/changes/ openspec/specs/ 2>/dev/null; then
   exit 0
 fi
 
-git commit -m "openspec: archive change ${name}" -- openspec/ >/dev/null 2>&1
-exit 0
+if ! git commit -m "openspec: archive change ${name}" -- openspec/changes/ openspec/specs/; then
+  echo "git-commit-on-archive: failed to commit openspec archive changes" >&2
+  exit 1
+fi

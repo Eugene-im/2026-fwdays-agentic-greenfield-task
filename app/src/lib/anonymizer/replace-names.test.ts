@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { replaceNames } from './replace-names'
+import { replaceNames, replaceNamesInHtml } from './replace-names'
 import { buildAliasMap } from './alias-map'
 
 describe('replaceNames', () => {
@@ -23,5 +23,20 @@ describe('replaceNames', () => {
   it('does not replace a name that only partially matches (word boundary)', () => {
     const aliasMap = buildAliasMap(['Ana'])
     expect(replaceNames('Banana is a fruit.', aliasMap)).toBe('Banana is a fruit.')
+  })
+
+  it('replaces Cyrillic names with Unicode-aware boundaries', () => {
+    const aliasMap = buildAliasMap(['Даниленко'])
+    expect(replaceNames('Автор: Даниленко.', aliasMap)).toBe('Автор: User1.')
+  })
+})
+
+describe('replaceNamesInHtml', () => {
+  it('replaces visible text but leaves href attributes untouched', () => {
+    const aliasMap = buildAliasMap(['Federico Ciner'])
+    const html = '<a href="https://example.com/Federico%20Ciner">Federico Ciner</a>'
+    expect(replaceNamesInHtml(html, aliasMap)).toBe(
+      '<a href="https://example.com/Federico%20Ciner">User1</a>',
+    )
   })
 })

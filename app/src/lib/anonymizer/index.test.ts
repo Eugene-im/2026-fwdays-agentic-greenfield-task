@@ -56,6 +56,15 @@ describe('anonymizeTicket', () => {
     expect(anonymized).toEqual(ticket)
   })
 
+  it('anonymizes title when it contains a known name', () => {
+    const ticket = ticketWith({
+      title: 'Notes from Federico Ciner',
+      assignee: 'Federico Ciner',
+    })
+    const { ticket: anonymized } = anonymizeTicket(ticket)
+    expect(anonymized.title).toBe('Notes from User1')
+  })
+
   it('anonymizes the real ROVODEV-36 fixture (assignee Federico Ciner, reporter Seerat)', () => {
     const result = parseJiraTicket(loadRovodev36Document())
     if (!result.ok) throw new Error('expected successful parse')

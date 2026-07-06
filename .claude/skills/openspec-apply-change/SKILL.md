@@ -69,11 +69,13 @@ Implement tasks from an OpenSpec change.
 
 6. **Implement tasks (loop until done or blocked)**
 
+   Identify the task artifact path from `contextFiles` in the apply instructions output (e.g. the `tasks` entry — do not assume a fixed file name like `tasks.md`).
+
    For each pending task:
    - Show which task is being worked on
    - Make the code changes required
    - Keep changes minimal and focused
-   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
+   - Mark task complete in that task artifact file: `- [ ]` → `- [x]`
    - Continue to next task
 
    **Pause if:**

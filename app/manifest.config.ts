@@ -6,14 +6,14 @@ import pkg from './package.json'
 declare const process: { env: Record<string, string | undefined> }
 
 // E2E-only build variant (`npm run build:e2e`): adds a host permission for the
-// reference Jira host so the automated Playwright harness can drive the popup
+// local fixture server so the automated Playwright harness can drive the popup
 // as a regular tab. activeTab — the production mechanism — is only granted by
 // a real toolbar-icon click, which no automation can produce; a host
 // permission makes tab.url visible and chrome.scripting injectable through
 // the exact same production code path. Production builds (`npm run build`)
 // never include this — NFR-04's minimal-permissions manifest stays intact.
 const e2eHostPermissions = process.env['TICKET2MD_E2E'] === '1'
-  ? { host_permissions: ['https://jira.atlassian.com/*'] }
+  ? { host_permissions: ['http://127.0.0.1/*', 'http://localhost/*'] }
   : {}
 
 export default defineManifest({

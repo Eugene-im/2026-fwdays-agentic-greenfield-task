@@ -23,6 +23,7 @@ const successCaveats = document.querySelector<HTMLDetailsElement>('#success-cave
 const successCaveatsList = document.querySelector<HTMLUListElement>('#success-caveats-list')!
 
 const EXTRACTION_TIMEOUT_MS = 15_000
+const DOWNLOAD_TIMEOUT_MS = 60_000
 
 function setState(state: PopupState): void {
   document.body.dataset['state'] = state
@@ -71,20 +72,34 @@ function extractTicket(tabId: number): Promise<ParseResult> {
 /** Downloads one URL to a relative path under Downloads, resolving on completion. */
 function downloadToPath(url: string, filename: string): Promise<void> {
   return new Promise<void>((resolve, reject) => {
+    let settled = false
+    let onChanged: (delta: chrome.downloads.DownloadDelta) => void
+
+    const finish = (outcome: 'resolve' | 'reject', error?: Error): void => {
+      if (settled) return
+      settled = true
+      clearTimeout(timeout)
+      chrome.downloads.onChanged.removeListener(onChanged)
+      if (outcome === 'resolve') resolve()
+      else reject(error ?? new Error('Download failed.'))
+    }
+
+    const timeout = setTimeout(() => {
+      finish('reject', new Error('Download timed out.'))
+    }, DOWNLOAD_TIMEOUT_MS)
+
     chrome.downloads.download({ url, filename, conflictAction: 'uniquify', saveAs: false }, (downloadId) => {
       if (chrome.runtime.lastError !== undefined || downloadId === undefined) {
-        reject(new Error(chrome.runtime.lastError?.message ?? 'Download failed to start.'))
+        finish('reject', new Error(chrome.runtime.lastError?.message ?? 'Download failed to start.'))
         return
       }
 
-      function onChanged(delta: chrome.downloads.DownloadDelta): void {
+      onChanged = (delta: chrome.downloads.DownloadDelta): void => {
         if (delta.id !== downloadId || delta.state === undefined) return
         if (delta.state.current === 'complete') {
-          chrome.downloads.onChanged.removeListener(onChanged)
-          resolve()
+          finish('resolve')
         } else if (delta.state.current === 'interrupted') {
-          chrome.downloads.onChanged.removeListener(onChanged)
-          reject(new Error(delta.error?.current ?? 'Download interrupted.'))
+          finish('reject', new Error(delta.error?.current ?? 'Download interrupted.'))
         }
       }
 

@@ -1,16 +1,16 @@
 import type { DescriptionBlock, ParsedTicket } from '../jira-parser'
 import { collectNames } from './collect-names'
 import { buildAliasMap } from './alias-map'
-import { replaceNames } from './replace-names'
+import { replaceNames, replaceNamesInHtml } from './replace-names'
 
 function anonymizeBlock(block: DescriptionBlock, aliasMap: Map<string, string>): DescriptionBlock {
   switch (block.kind) {
     case 'heading':
-      return { ...block, html: replaceNames(block.html, aliasMap) }
+      return { ...block, html: replaceNamesInHtml(block.html, aliasMap) }
     case 'paragraph':
-      return { ...block, html: replaceNames(block.html, aliasMap) }
+      return { ...block, html: replaceNamesInHtml(block.html, aliasMap) }
     case 'list':
-      return { ...block, items: block.items.map((item) => replaceNames(item, aliasMap)) }
+      return { ...block, items: block.items.map((item) => replaceNamesInHtml(item, aliasMap)) }
     case 'code':
       return { ...block, code: replaceNames(block.code, aliasMap) }
   }
@@ -27,6 +27,7 @@ export function anonymizeTicket(ticket: ParsedTicket): AnonymizeResult {
 
   const anonymizedTicket: ParsedTicket = {
     ...ticket,
+    title: replaceNames(ticket.title, aliasMap),
     assignee: ticket.assignee ? replaceNames(ticket.assignee, aliasMap) : ticket.assignee,
     reporter: ticket.reporter ? replaceNames(ticket.reporter, aliasMap) : ticket.reporter,
     description: ticket.description.map((block) => anonymizeBlock(block, aliasMap)),

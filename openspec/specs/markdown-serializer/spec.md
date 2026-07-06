@@ -6,7 +6,7 @@ Defines the framework-free serializer that converts a `ParsedTicket` into a self
 
 ## Requirements
 
-### Requirement: Serialize Core Ticket Content to Markdown
+### Requirement: Serialize Core Ticket Content to Markdown (FR-10)
 The serializer SHALL convert a `ParsedTicket` into a single Markdown string containing the title, key, and available metadata fields (type, status, resolution, priority, components, labels, assignee, reporter, created, updated).
 
 #### Scenario: Full ticket with all metadata present
@@ -17,7 +17,7 @@ The serializer SHALL convert a `ParsedTicket` into a single Markdown string cont
 - **WHEN** the ticket has `undefined`/empty values for priority, components, or labels (as in the real ROVODEV-36 fixture)
 - **THEN** the serializer omits those fields from the output rather than rendering them as empty or "undefined"
 
-### Requirement: Convert Description Blocks to Markdown
+### Requirement: Convert Description Blocks to Markdown (FR-10)
 The serializer SHALL render each `DescriptionBlock` according to its kind: headings as `#`-prefixed lines matching their level, paragraphs as plain text, lists as `-`/numbered Markdown lists, and code blocks as fenced code blocks — converting each block's inline HTML content (links, bold, code spans) into corresponding Markdown inline syntax rather than emitting raw HTML.
 
 #### Scenario: Paragraph with an inline link
@@ -32,7 +32,7 @@ The serializer SHALL render each `DescriptionBlock` according to its kind: headi
 - **WHEN** a code block has `language: "bash"`
 - **THEN** the output Markdown fenced code block's info string is `bash`
 
-### Requirement: Plan Attachment File Names Independently of Download
+### Requirement: Plan Attachment File Names Independently of Download (FR-13, FR-18)
 The serializer SHALL provide a pure function that assigns each attachment an order-preserving numeric prefix (`01-`, `02-`, …) and a filesystem-safe file name, without performing any network or file-system I/O.
 
 #### Scenario: Multiple attachments in DOM order
@@ -47,7 +47,7 @@ The serializer SHALL provide a pure function that assigns each attachment an ord
 - **WHEN** `planAttachmentNames` is given an empty array
 - **THEN** it returns an empty array
 
-### Requirement: Markdown References Local Media Paths
+### Requirement: Markdown References Local Media Paths (FR-14)
 The serialized Markdown SHALL reference attachments via their planned relative `media/<prefix>-<name>` path, so the exported folder is self-contained and works offline.
 
 #### Scenario: Ticket with attachments

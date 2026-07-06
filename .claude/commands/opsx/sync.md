@@ -48,7 +48,7 @@ This is an **agent-driven** operation - you will read delta specs and directly e
 
    a. **Read the delta spec** to understand the intended changes
 
-   b. **Read the main spec** at `openspec/specs/<capability>/spec.md` (may not exist yet)
+   b. **Read the main spec** at the resolved path for that capability from the status JSON (`artifactPaths`, `planningHome`, or other CLI-resolved paths — not a hardcoded `openspec/specs/<capability>/spec.md`, which breaks store mode; may not exist yet)
 
    c. **Apply changes intelligently**:
 
@@ -71,7 +71,7 @@ This is an **agent-driven** operation - you will read delta specs and directly e
       - Find the FROM requirement, rename to TO
 
    d. **Create new main spec** if capability doesn't exist yet:
-      - Create `openspec/specs/<capability>/spec.md`
+      - Create the main spec at the resolved path for that capability from the status JSON
       - Add Purpose section (can be brief, mark as TBD)
       - Add Requirements section with the ADDED requirements
 
@@ -138,6 +138,7 @@ Main specs are now updated. The change remains active - archive when implementat
 **Guardrails**
 - Read both delta and main specs before making changes
 - Preserve existing content not mentioned in delta
+- **Stop on conflict with accepted requirements:** before applying a delta, read `docs/requirements.md`. If a delta change would contradict an `accepted` FR-xx/NFR-xx requirement, stop and surface the conflict — do not silently overwrite canonical specs or requirements
 - If something is unclear, ask for clarification
 - Show what you're changing as you go
 - The operation should be idempotent - running twice should give same result

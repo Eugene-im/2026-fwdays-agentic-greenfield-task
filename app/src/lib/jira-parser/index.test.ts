@@ -140,4 +140,18 @@ describe('parseJiraTicket — hand-authored fixtures for fields absent from the 
       { name: 'log.txt', url: 'https://example.com/files/log.txt' },
     ])
   })
+
+  it('resolves relative attachment hrefs to absolute URLs', () => {
+    const doc = parseFragment(`
+      <a id="key-val">PROJ-5</a>
+      <div id="summary-val"><h2>Relative attachment</h2></div>
+      <div id="attachmentmodule">
+        <a class="attachment-title" href="/secure/attachment/12345/screenshot.png">screenshot.png</a>
+      </div>
+    `)
+    const result = parseJiraTicket(doc)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.ticket.attachments[0]?.url).toMatch(/\/secure\/attachment\/12345\/screenshot\.png$/)
+  })
 })

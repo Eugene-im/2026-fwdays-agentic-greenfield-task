@@ -30,9 +30,13 @@ Fixtures for parser development are separate (see `examples/`); these cases exer
 **Steps:** Let the TC-03 export finish with all downloads succeeding.
 **Expected:** Popup shows the green-accented message "Export completed successfully." The popup does not auto-close.
 
-### TC-05 — Error state with details (FR-08, FR-12)
-**Steps:** Export T-BROKEN.
-**Expected:** Popup shows the red-accented "Export failed" (or partial-failure) message with an expandable details block naming exactly the attachments that could not be downloaded.
+### TC-05 — Error state with details (FR-08)
+**Steps:** Block or corrupt the export so the `.md` file cannot be saved (e.g. revoke `downloads` permission temporarily, or use a ticket page the parser cannot read).
+**Expected:** Popup shows the red-accented "Export failed" message with an expandable details block explaining what broke. No partial export is presented as success.
+
+### TC-05b — Partial attachment failure stays success-with-caveats (FR-12)
+**Steps:** Export T-BROKEN (one unreachable attachment, others fine).
+**Expected:** Popup shows the green-accented success message with a caveats `<details>` block naming exactly the attachments that could not be downloaded. The `.md` file and reachable media are still saved.
 
 ---
 
@@ -109,10 +113,11 @@ Fixtures for parser development are separate (see `examples/`); these cases exer
 | Requirement | Covered by |
 |-------------|-----------|
 | FR-01, FR-02 | TC-16 |
-| FR-04…FR-08 | TC-01…TC-05 |
+| FR-04…FR-07 | TC-01…TC-04 |
 | FR-09 | TC-14 |
 | FR-10 | TC-08 |
-| FR-12 | TC-05, TC-15 |
+| FR-08 | TC-05 |
+| FR-12 | TC-05b, TC-15 |
 | FR-13 | TC-09 |
 | FR-14 | TC-10 |
 | FR-15…FR-17 | TC-06 |

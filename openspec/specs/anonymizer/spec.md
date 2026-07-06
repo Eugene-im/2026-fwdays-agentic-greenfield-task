@@ -22,7 +22,11 @@ The anonymizer SHALL collect known real names from a ticket's `assignee`, `repor
 - **THEN** the alias map is empty and the ticket is returned unchanged
 
 ### Requirement: Replace Names Across All Text and File-Name Surfaces
-The anonymizer SHALL replace every occurrence of a known name with its alias in: the `assignee` and `reporter` fields, each comment's `author` and `body`, each description block's text content, and each attachment's `name`.
+The anonymizer SHALL replace every occurrence of a known name with its alias in: the ticket `title`, the `assignee` and `reporter` fields, each comment's `author` and `body`, each description block's text content, and each attachment's `name`.
+
+#### Scenario: Name appears in the ticket title
+- **WHEN** the ticket `title` contains a known person's full name
+- **THEN** the anonymized ticket's `title` has that name replaced with the person's alias
 
 #### Scenario: Name appears in a comment body
 - **WHEN** a comment's `body` contains the reporter's full name

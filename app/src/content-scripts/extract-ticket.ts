@@ -9,4 +9,6 @@ const message: TicketParseMessage = {
   result: parseJiraTicket(document),
 }
 
-void chrome.runtime.sendMessage(message)
+void chrome.runtime.sendMessage(message).catch(() => {
+  // Popup may have closed before the message is delivered — no listener to receive it.
+})

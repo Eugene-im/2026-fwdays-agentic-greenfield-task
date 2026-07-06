@@ -30,7 +30,7 @@ Visual identity and popup composition live in [DESIGN.md](./DESIGN.md).
 
 | ID | Requirement | Status |
 |----|-------------|--------|
-| FR-10 | The Markdown file captures everything the ticket contains: title, key/ID, fields (status, priority, labels, and similar visible metadata), description, checklists, links, and all comments. | accepted |
+| FR-10 | The Markdown file captures everything the ticket contains: title, key/ID, fields (status, priority, labels, and similar visible metadata), description, checklists, links, and all comments. Comment bodies are flattened to plain text in MVP — list structure, paragraphs, and inline code inside comments are not preserved as separate blocks (unlike the description). | accepted |
 | FR-11 | Attachments referenced in the ticket are downloaded into the `media/` subfolder. | accepted |
 | FR-12 | Media is extracted best-effort from the DOM (attachment URLs may point to expiring bucket links). A failed media download is reported in the error details but never aborts the Markdown conversion or the remaining downloads. | accepted |
 | FR-13 | Media files are renamed with an order-preserving numeric prefix: `01-screenshot.png`, `02-log.txt`, … Duplicated names after prefixing are deduplicated. | accepted |
@@ -84,7 +84,7 @@ Visual identity and popup composition live in [DESIGN.md](./DESIGN.md).
 - Unit tests (Vitest) cover the Markdown serializer, the anonymizer (including file-name anonymization and alias consistency), and the Jira DOM parser.
 - The parser is tested against a static HTML fixture: the saved Jira ticket page in `examples/`.
 - Failure path is tested explicitly: unreachable media URLs must produce the FR-12 behavior (partial success + error details), not an aborted export.
-- E2E: Playwright loads the unpacked extension in a real Chrome instance, drives the popup through all four states (FR-05–FR-08), triggers export against the live reference ticket [ROVODEV-36](https://jira.atlassian.com/browse/ROVODEV-36) (public, no login), and asserts the downloaded folder/media/anonymization on disk. Same ticket backs the static `examples/` fixture used by unit tests, so parser behavior stays consistent between the two layers.
+- E2E: Playwright loads the unpacked extension in a real Chrome instance, drives the popup through all four states (FR-05–FR-08), triggers export against the static ROVODEV-36 HTML fixture served locally (deterministic; no live Jira dependency), and asserts the downloaded Markdown and anonymization on disk. The same ticket backs the static `examples/` fixture used by unit tests, so parser behavior stays consistent between the two layers. Folder layout (`Downloads/<TICKET-ID>/…/media/`) is covered by `buildExportPaths` unit tests because Playwright saves on-disk files under GUID names.
 
 ## 5. Out of scope (MVP)
 

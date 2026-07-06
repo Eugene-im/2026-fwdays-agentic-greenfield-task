@@ -49,7 +49,7 @@ describe('serializeTicketToMarkdown — attachments and comments present', () =>
     const plan = planAttachmentNames(ticket.attachments)
     const markdown = serializeTicketToMarkdown(ticket, plan)
     expect(markdown).toContain('## Attachments')
-    expect(markdown).toContain('[screenshot.png](media/01-screenshot.png)')
+    expect(markdown).toContain('[screenshot.png](<media/01-screenshot.png>)')
     expect(markdown).not.toContain('https://example.com/files/screenshot.png')
   })
 
