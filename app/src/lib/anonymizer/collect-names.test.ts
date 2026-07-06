@@ -45,4 +45,8 @@ describe('collectNames', () => {
   it('returns an empty array when there are no known names', () => {
     expect(collectNames(ticketWith({}))).toEqual([])
   })
+
+  it('collects a person-shaped title when no assignee or reporter is set', () => {
+    expect(collectNames(ticketWith({ title: 'Federico Ciner' }))).toEqual(['Federico Ciner'])
+  })
 })

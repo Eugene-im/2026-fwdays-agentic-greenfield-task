@@ -8,6 +8,12 @@ export interface ParsedAttachment {
   url: string
 }
 
+/** Attachment present in the DOM but omitted from `attachments` because its URL could not be resolved. */
+export interface AttachmentParseIssue {
+  name: string
+  reason: string
+}
+
 export type DescriptionBlock =
   | { kind: 'heading'; level: number; html: string }
   | { kind: 'paragraph'; html: string }
@@ -30,6 +36,7 @@ export interface ParsedTicket {
   updated?: string
   comments: ParsedComment[]
   attachments: ParsedAttachment[]
+  attachmentSkips?: AttachmentParseIssue[]
 }
 
 export type ParseResult = { ok: true; ticket: ParsedTicket } | { ok: false; reason: string }

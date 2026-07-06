@@ -6,7 +6,7 @@ import { parseAssignee, parseReporter, parseCreated, parseUpdated } from './pars
 import { parseComments } from './parse-comments'
 import { parseAttachments } from './parse-attachments'
 
-export type { ParsedTicket, ParsedComment, ParsedAttachment, DescriptionBlock, ParseResult } from './types'
+export type { ParsedTicket, ParsedComment, ParsedAttachment, AttachmentParseIssue, DescriptionBlock, ParseResult } from './types'
 
 export function parseJiraTicket(root: ParentNode): ParseResult {
   const key = parseKey(root)
@@ -15,6 +15,9 @@ export function parseJiraTicket(root: ParentNode): ParseResult {
   if (!key || !title) {
     return { ok: false, reason: 'Missing ticket key or title — not a recognized Jira ticket page' }
   }
+
+  const comments = parseComments(root)
+  const { attachments, skipped } = parseAttachments(root)
 
   return {
     ok: true,
@@ -32,8 +35,9 @@ export function parseJiraTicket(root: ParentNode): ParseResult {
       reporter: parseReporter(root),
       created: parseCreated(root),
       updated: parseUpdated(root),
-      comments: parseComments(root),
-      attachments: parseAttachments(root),
+      comments,
+      attachments,
+      ...(skipped.length > 0 ? { attachmentSkips: skipped } : {}),
     },
   }
 }

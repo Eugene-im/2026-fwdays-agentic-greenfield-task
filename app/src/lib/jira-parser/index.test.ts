@@ -154,4 +154,21 @@ describe('parseJiraTicket — hand-authored fixtures for fields absent from the 
     if (!result.ok) return
     expect(result.ticket.attachments[0]?.url).toMatch(/\/secure\/attachment\/12345\/screenshot\.png$/)
   })
+
+  it('records attachmentSkips when href cannot be resolved', () => {
+    const doc = parseFragment(`
+      <a id="key-val">PROJ-6</a>
+      <div id="summary-val"><h2>Bad attachment link</h2></div>
+      <div id="attachmentmodule">
+        <a class="attachment-title" href="ftp://bad.example/broken.png">broken.png</a>
+      </div>
+    `)
+    const result = parseJiraTicket(doc)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.ticket.attachments).toEqual([])
+    expect(result.ticket.attachmentSkips).toEqual([
+      { name: 'broken.png', reason: 'Could not resolve attachment URL.' },
+    ])
+  })
 })

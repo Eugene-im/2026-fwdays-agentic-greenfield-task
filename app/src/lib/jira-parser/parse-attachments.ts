@@ -1,4 +1,4 @@
-import type { ParsedAttachment } from './types'
+import type { ParsedAttachment, AttachmentParseIssue } from './types'
 
 function resolveAttachmentUrl(href: string, root: ParentNode): string | undefined {
   try {
@@ -6,23 +6,45 @@ function resolveAttachmentUrl(href: string, root: ParentNode): string | undefine
       root instanceof Document && root.baseURI
         ? root.baseURI
         : root.ownerDocument?.baseURI ?? 'https://jira.example.com/'
-    return new URL(href, base).href
+    const url = new URL(href, base)
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return undefined
+    return url.href
   } catch {
     return undefined
   }
 }
 
-export function parseAttachments(root: ParentNode): ParsedAttachment[] {
-  const container = root.querySelector('#attachmentmodule')
-  if (!container) return []
+export interface ParseAttachmentsResult {
+  attachments: ParsedAttachment[]
+  skipped: AttachmentParseIssue[]
+}
 
-  return Array.from(container.querySelectorAll('a.attachment-title'))
-    .map((a) => {
-      const name = a.textContent?.trim()
-      const href = a.getAttribute('href')
-      if (!name || !href) return undefined
-      const url = resolveAttachmentUrl(href, root)
-      return url ? { name, url } : undefined
-    })
-    .filter((attachment): attachment is ParsedAttachment => Boolean(attachment))
+export function parseAttachments(root: ParentNode): ParseAttachmentsResult {
+  const container = root.querySelector('#attachmentmodule')
+  if (!container) return { attachments: [], skipped: [] }
+
+  const attachments: ParsedAttachment[] = []
+  const skipped: AttachmentParseIssue[] = []
+
+  for (const a of container.querySelectorAll('a.attachment-title')) {
+    const name = a.textContent?.trim()
+    const href = a.getAttribute('href')
+
+    if (!name) continue
+
+    if (!href) {
+      skipped.push({ name, reason: 'Attachment link is missing href.' })
+      continue
+    }
+
+    const url = resolveAttachmentUrl(href, root)
+    if (!url) {
+      skipped.push({ name, reason: 'Could not resolve attachment URL.' })
+      continue
+    }
+
+    attachments.push({ name, url })
+  }
+
+  return { attachments, skipped }
 }

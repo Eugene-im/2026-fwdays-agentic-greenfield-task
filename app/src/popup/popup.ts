@@ -194,7 +194,12 @@ async function runExport(): Promise<void> {
   }
 
   const outcomes = await downloadAttachments(plans, paths.mediaDir)
-  showSuccess(outcomes.filter((outcome) => !outcome.ok))
+  const parseSkips: AttachmentOutcome[] = (ticket.attachmentSkips ?? []).map((skip) => ({
+    fileName: skip.name,
+    ok: false,
+    error: skip.reason,
+  }))
+  showSuccess([...outcomes.filter((outcome) => !outcome.ok), ...parseSkips])
 }
 
 async function init(): Promise<void> {

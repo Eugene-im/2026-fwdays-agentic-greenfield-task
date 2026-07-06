@@ -7,7 +7,7 @@ Defines the framework-free anonymizer that builds a stable per-export alias map 
 ## Requirements
 
 ### Requirement: Build a Consistent Alias Map from Structured Name Fields
-The anonymizer SHALL collect known real names from a ticket's `assignee`, `reporter`, and comment `author` fields (in that order, first occurrence wins) and assign each unique name a stable `UserN` alias, starting at `User1`.
+The anonymizer SHALL collect known real names from a ticket's `assignee`, `reporter`, and comment `author` fields (in that order, first occurrence wins), and SHALL also treat a person-shaped `title` (e.g. "First Last") as a known name when no assignee/reporter supplies it, assigning each unique name a stable `UserN` alias starting at `User1`.
 
 #### Scenario: Assignee and reporter are different people
 - **WHEN** a ticket has a distinct assignee and reporter
